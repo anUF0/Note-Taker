@@ -32,16 +32,27 @@ app.get('api/notes', (req,res)=>{
     )
 });
 
-
+//Post note fucntion
 app.post('/api/notes', (req,res) =>{
-    const newNote = req.body
-    newNote.id = uuidv4()
+    const newNote ={
+    title: req.body.title,
+    text: req.body.text,
+    id: uuidv4()
+    }
 
     db.push(newNote)
-    
     fs.writeFileSync('./db/db.json', JSON.stringify(db))
-
     res.json(db)
+});
+
+//WIP Delete function
+app.delete('./api/notes/:id', (req, res)=>{
+    const updateDb =db.filter((note) =>
+    note.id !== req.params.id)
+
+    fs.writeFileSync('./db/db.json', JSON.stringify(updateDb))
+
+    readFile.json(updateDb)
 });
 
 app.listen(PORT, () =>
