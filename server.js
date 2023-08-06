@@ -23,7 +23,7 @@ app.get('/notes', (req, res)=>
 res.sendFile(path.join(__dirname, '/public/notes.html'))
 );
 
-//
+//WIP Reads database of Notes
 app.get('/api/notes', (req, res) => {
     fs.readFile('./db/db.json', (err, data) => {
         if (err) throw err;
@@ -46,15 +46,13 @@ app.post('/api/notes', (req,res) =>{
     res.json(db)
 });
 
-//WIP Delete function
+//Delete function
 app.delete('/api/notes/:id', (req, res) => {
     const updateDb = db.filter((note) =>
         note.id !== req.params.id)
 
-    // update the db.json file to reflect the modified notes array
     fs.writeFileSync('./db/db.json', JSON.stringify(updateDb))
 
-    // send that removed note object back to user
     res.json(updateDb)
 })
 
