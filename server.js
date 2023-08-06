@@ -24,13 +24,14 @@ res.sendFile(path.join(__dirname, '/public/notes.html'))
 );
 
 //
-app.get('api/notes', (req,res)=>{
-    fs.readFile('./db/db.json', (data)=>{
-        const parsedData = JSON.parse(data);
-        res.json(parsedData)
-    }
-    )
-});
+app.get('/api/notes', (req, res) => {
+    fs.readFile('./db/db.json', (err, data) => {
+        if (err) throw err;
+        const parseData = JSON.parse(data);
+        res.json(parseData)
+    });   
+})
+
 
 //Post note fucntion
 app.post('/api/notes', (req,res) =>{
@@ -46,14 +47,16 @@ app.post('/api/notes', (req,res) =>{
 });
 
 //WIP Delete function
-app.delete('./api/notes/:id', (req, res)=>{
-    const updateDb =db.filter((note) =>
-    note.id !== req.params.id)
+app.delete('/api/notes/:id', (req, res) => {
+    const updateDb = db.filter((note) =>
+        note.id !== req.params.id)
 
+    // update the db.json file to reflect the modified notes array
     fs.writeFileSync('./db/db.json', JSON.stringify(updateDb))
 
-    readFile.json(updateDb)
-});
+    // send that removed note object back to user
+    res.json(updateDb)
+})
 
 app.listen(PORT, () =>
   console.log(`App listening at http://localhost:${PORT}`)
