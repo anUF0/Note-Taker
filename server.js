@@ -24,30 +24,47 @@ app.get('/notes', (req, res)=>
 res.sendFile(path.join(__dirname, '/public/notes.html'))
 );
 
-//WIP Reads database of Notes
+//Reads database of Notes
 app.get('/api/notes', (req, res) => {
     fs.readFile('./db/db.json', (err, data) => {
-        if (err) throw err;
+        if (err) throw new Error;
+        else{
         const parseData = JSON.parse(data);
         res.json(parseData)
+        }
     });   
 })
 
 
 //Post note fucntion
 app.post('/api/notes', (req,res) =>{
+    
+    const {title, text} = req.body;
+    
+    if (req.body){
     const newNote ={
-    title: req.body.title,
-    text: req.body.text,
-    id: uuidv4()
-    }
+    title,
+    text,
+    id: uuidv4(),
+    };
+    fs.readFile('./db/db.json', 'utf8',(err, data) =>
+    {if(err){
+        throw new Error
+    }else{
+        const parsedNotes = JSON.parse(data);
+        parsedNotes.push(newNote);
 
-    db.push(newNote)
-    fs.writeFileSync('./db/db.json', JSON.stringify(db))
-    res.json(db)
-});
+        fs.writeFile('./db/db.json', JSON.stringify(parsedNotes, null, 4), (err) =>
+        err ? console.error(err) : console.info(`Notes has been updated`)
+        )
+    }})}
+    else {
+        res.error('Error posting note');
+      }
+    });
 
-//Delete function
+
+//WIP Delete function
 app.delete('/api/notes/:id', (req, res) => {
     const updateDb = db.filter((note) =>
         note.id !== req.params.id)
