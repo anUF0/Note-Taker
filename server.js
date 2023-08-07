@@ -4,7 +4,7 @@ const db = require('./db/db.json');
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 
-
+//Defaults to route 3001 if being run locally, else will use generated PORT
 const PORT = process.env.PORT || 3001;
 const app = express();
 
@@ -17,6 +17,7 @@ app.use(express.json());
 app.get('/', (req, res) => 
   res.sendFile(path.join(__dirname, '/public/index.html'))
 );
+
 
 //Get function for the notes page
 app.get('/notes', (req, res)=>
@@ -55,6 +56,11 @@ app.delete('/api/notes/:id', (req, res) => {
 
     res.json(updateDb)
 })
+
+//Wildcard path to return to index
+app.get('*', (req, res) => 
+  res.sendFile(path.join(__dirname, '/public/index.html'))
+);
 
 app.listen(PORT, () =>
   console.log(`App listening at http://localhost:${PORT}`)
