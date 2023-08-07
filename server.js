@@ -68,8 +68,8 @@ app.delete('/api/notes/:id', (req, res) => {
     const db = JSON.parse(fs.readFileSync('db/db.json'))
     const deleteNotes = db.filter(note => note.id !== req.params.id);
 
-    fs.writeFileSync('db/db.json', JSON.stringify(deleteNotes, null, 4)), (err)=>
-    err ? console.error(err): console.info(`Note Deleted`);
+    fs.writeFileSync('db/db.json', JSON.stringify(deleteNotes, null, 4), (err)=>
+    err ? console.error(err): console.info(`Note Deleted`));
     res.json(deleteNotes);
 });
 
@@ -78,6 +78,7 @@ app.get('*', (req, res) =>
   res.sendFile(path.join(__dirname, '/public/index.html'))
 );
 
+//Gives an easy link to the port when run in command line
 app.listen(PORT, () =>
   console.log(`App listening at http://localhost:${PORT}`)
 );
