@@ -1,6 +1,5 @@
 const express = require('express');
 const path = require('path');
-const db = require('./db/db.json');
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 
@@ -47,8 +46,8 @@ app.post('/api/notes', (req,res) =>{
     text,
     id: uuidv4(),
     };
-    fs.readFile('./db/db.json', 'utf8',(err, data) =>
-    {if(err){
+    fs.readFile('./db/db.json', 'utf8',(err, data) =>{
+    if(err){
         throw new Error
     }else{
         const parsedNotes = JSON.parse(data);
@@ -56,23 +55,23 @@ app.post('/api/notes', (req,res) =>{
 
         fs.writeFile('./db/db.json', JSON.stringify(parsedNotes, null, 4), (err) =>
         err ? console.error(err) : console.info(`Notes has been updated`)
-        )
-    }})}
+        );
+    }});}
     else {
         res.error('Error posting note');
       }
     });
 
 
-//WIP Delete function
+//Delete function
 app.delete('/api/notes/:id', (req, res) => {
-    const updateDb = db.filter((note) =>
-        note.id !== req.params.id)
+    const db = JSON.parse(fs.readFileSync('db/db.json'))
+    const deleteNotes = db.filter(note => note.id !== req.params.id);
 
-    fs.writeFileSync('./db/db.json', JSON.stringify(updateDb))
-
-    res.json(updateDb)
-})
+    fs.writeFileSync('db/db.json', JSON.stringify(deleteNotes, null, 4)), (err)=>
+    err ? console.error(err): console.info(`Note Deleted`);
+    res.json(deleteNotes);
+});
 
 //Wildcard path to return to index
 app.get('*', (req, res) => 
